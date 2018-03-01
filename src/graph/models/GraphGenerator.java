@@ -52,12 +52,12 @@ public class GraphGenerator<V> {
         while (newNodes.size() > 0) {
             ArrayList<V> toConnect = new ArrayList<>();
 
-            // init the graph with the first node.
+            // init the graph with the first two node.
             if (graph.getVertices().size() == 0) {
                 V firstNode = newNodes.get(0); // get first node in the nodes list 
                 graph.addVertex(firstNode);
 
-                V secondeNode = newNodes.get(1); // get first node in the nodes list 
+                V secondeNode = newNodes.get(1); // get second node in the nodes list 
                 graph.addVertex(secondeNode);
 
                 graph.addEdge(firstNode, secondeNode);
@@ -67,22 +67,22 @@ public class GraphGenerator<V> {
 
             int totalEdges = graph.getEdgesNumber();
 
-            for (V n : graph.getVertices()) {
-                List<V> neighbors = graph.getAdjacencies().get(n);
-                float nodeProbability = (float)graph.getAdjacencies().get(n).size() / (float)totalEdges;
-                float randomFloat = new Random().nextFloat();
-                if (nodeProbability > randomFloat) {
-                    toConnect.add(n);
-                }
+            V chosenNode = null;
+            float randomFloat = new Random().nextFloat();
+            int iNode = 0;
+            while ((iNode <= graph.getVertices().size()) && (randomFloat >= 0)) {
+                chosenNode = graph.getVertices().get(iNode);
+                float nodeProbability = (float) graph.getAdjacencies().get(chosenNode).size() / (float) totalEdges;
+                //System.out.println("R:" + randomFloat);
+                //System.out.println("P:" + nodeProbability);
+                randomFloat = randomFloat - nodeProbability;
+                iNode++;
             }
 
             V currentNode = newNodes.get(0);
             graph.addVertex(currentNode);
-            for (V v : graph.getVertices()) {
-                if (toConnect.contains(v)) {
-                    graph.addEdge(v, currentNode);
-                }
-            }
+            graph.addEdge(currentNode, chosenNode);
+
             newNodes.remove(currentNode);
         }
         return graph;

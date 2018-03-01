@@ -10,16 +10,13 @@ import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import graph.models.Graph;
 import graph.models.GraphGenerator;
+import graph.models.JGraphT_helper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 import org.jgraph.graph.Edge;
-import org.jgrapht.ListenableGraph;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultListenableGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.ListenableDirectedWeightedGraph;
+
 
 /**
  *
@@ -75,21 +72,7 @@ public class Main {
         Graph<String> freeNetwork = generator.generateScaleFreeNetwork((ArrayList<String>) graph.getVertices());
         System.out.println(freeNetwork.toString());
 
-        JFrame frame = new JFrame("DemoGraph");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        ListenableGraph<String, MyEdge> g = buildGraph(freeNetwork);
-        JGraphXAdapter<String, MyEdge> graphAdapter
-                = new JGraphXAdapter<String, MyEdge>(g);
-
-        mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
-
-        frame.add(new mxGraphComponent(graphAdapter));
-
-        frame.pack();
-        frame.setLocationByPlatform(true);
-        frame.setVisible(true);
+        JGraphT_helper.createGUIgraph(freeNetwork);
 
         Graph<String> graph2 = new Graph<String>(false);
         for (int i = 0; i < 50; i++) {
@@ -98,48 +81,13 @@ public class Main {
         Graph<String> freeNetwork2 = generator.generateScaleFreeNetwork((ArrayList<String>) graph2.getVertices());
         System.out.println(freeNetwork2.toString());
 
-        JFrame frame2 = new JFrame("DemoGraph");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       JGraphT_helper.createGUIgraph(freeNetwork2);
 
-        ListenableGraph<String, MyEdge> g2 = buildGraph(freeNetwork2);
-        JGraphXAdapter<String, MyEdge> graphAdapter2
-                = new JGraphXAdapter<String, MyEdge>(g2);
-
-        mxIGraphLayout layout2 = new mxCircleLayout(graphAdapter2);
-        layout2.execute(graphAdapter2.getDefaultParent());
-
-        frame2.add(new mxGraphComponent(graphAdapter2));
-
-        frame2.pack();
-        frame2.setLocationByPlatform(true);
-        frame2.setVisible(true);
-
+       graphDraw fra = new graphDraw();
+       fra.setVisible(true);
     }
 
-    public static ListenableGraph<String, MyEdge> buildGraph(Graph<String> myGraph) {
-        ListenableDirectedWeightedGraph<String, MyEdge> g
-                = new ListenableDirectedWeightedGraph<String, MyEdge>(MyEdge.class);
+   
 
-        for (String v : myGraph.getVertices()) {
-            g.addVertex(v);
-        }
-
-        for (String v1 : myGraph.getVertices()) {
-            for (String v2 : myGraph.getAdjacencies().get(v1)) {
-                System.out.println("" + v1);
-                System.out.println("" + v2);
-                MyEdge e = (MyEdge) g.addEdge(v1, v2);
-                g.setEdgeWeight(e, 1);
-            }
-        }
-        return g;
-    }
-
-    public static class MyEdge extends DefaultWeightedEdge {
-
-        @Override
-        public String toString() {
-            return String.valueOf(getWeight());
-        }
-    }
+   
 }
